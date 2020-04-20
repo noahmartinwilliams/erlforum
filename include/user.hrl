@@ -1,0 +1,1 @@
+-record(user, {name, id, is_admin, cookie, salt, hash}).
