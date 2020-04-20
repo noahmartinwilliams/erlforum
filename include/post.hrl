@@ -1,0 +1,1 @@
+-record(post, {user, id, contents, tid, is_deleted}).

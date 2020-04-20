@@ -32,3 +32,6 @@ add_user_test() ->
 	odbc:stop(),
 	file:delete("db/database.db").
 
+render_user(User) when is_record(User, user) ->
+	#user{name=Name} = User,
+	"<div>" ++ Name ++ "</div>".
