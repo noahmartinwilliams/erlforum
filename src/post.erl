@@ -19,7 +19,7 @@ get_post(Ref, Id) ->
 	{selected, _, [{Pid, IsDeleted, Uid, Contents, Tid}]} = odbc:param_query(Ref, "SELECT * FROM posts WHERE id == ?;", [{sql_integer, [Id]}]),
 	#post{user=user:get_user(Ref, Uid), id=Pid, is_deleted = IsDeleted, contents=Contents, tid=Tid}.
 
-add_user_test() ->
+add_post_test() ->
 	odbc:start(),
 	{ok, Ref} = odbc:connect("DSN=erlforum", []),
 	user:creat_user_table(Ref),
@@ -33,3 +33,7 @@ add_user_test() ->
 	odbc:disconnect(Ref),
 	odbc:stop(),
 	file:delete("db/database.db").
+
+render_post(Post) -> 
+	#post{user = User, contents = Contents} = Post,
+	"<div><table><tr><td>" ++ render_user(User) ++ "</td><td><div>" ++ Contents ++ "</div></td></tr></table></div>"
