@@ -1,0 +1,1 @@
+-record(thread, {name, user, posts, id}).

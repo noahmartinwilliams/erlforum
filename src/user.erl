@@ -2,7 +2,7 @@
 -include("include/user.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--export([creat_user_table/1, add_user/2, get_user/2]).
+-export([creat_user_table/1, add_user/2, get_user/2, render_user/1]).
 creat_user_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, is_admin BOOL);").
 

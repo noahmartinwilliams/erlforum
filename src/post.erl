@@ -2,7 +2,7 @@
 -include("include/post.hrl").
 -include("include/user.hrl").
 -include_lib("eunit/include/eunit.hrl").
--export([creat_post_table/1, add_post/2, get_post/2]).
+-export([selected2post/2, selected2posts/2, creat_post_table/1, add_post/2, get_post/2, render_post/1]).
 
 creat_post_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, is_deleted BOOL, uid INTEGER, contents TEXT, tid INTEGER);").
@@ -15,9 +15,14 @@ add_post(Ref, Post) ->
 	Tid2 = {sql_integer, [Tid]},
 	odbc:param_query(Ref, "INSERT INTO posts (is_deleted, uid, contents, tid) VALUES(false, ?, ?, ?);" , [Uid2, Contents2, Tid2]).
 
+selected2post(Ref, {Pid, IsDeleted, Uid, Contents, Tid}) -> #post{user=user:get_user(Ref, Uid), id=Pid, is_deleted=IsDeleted, contents=Contents, tid=Tid}.
+
+selected2posts(_, []) -> [] ;
+selected2posts(Ref, [Head|Tail]) -> [selected2post(Ref, Head)|selected2posts(Ref, Tail)].
+
 get_post(Ref, Id) ->
-	{selected, _, [{Pid, IsDeleted, Uid, Contents, Tid}]} = odbc:param_query(Ref, "SELECT * FROM posts WHERE id == ?;", [{sql_integer, [Id]}]),
-	#post{user=user:get_user(Ref, Uid), id=Pid, is_deleted = IsDeleted, contents=Contents, tid=Tid}.
+	{selected, _, [Selected]} = odbc:param_query(Ref, "SELECT * FROM posts WHERE id == ?;", [{sql_integer, [Id]}]),
+	selected2post(Ref, Selected).
 
 add_post_test() ->
 	odbc:start(),
@@ -36,4 +41,4 @@ add_post_test() ->
 
 render_post(Post) -> 
 	#post{user = User, contents = Contents} = Post,
-	"<div><table><tr><td>" ++ render_user(User) ++ "</td><td><div>" ++ Contents ++ "</div></td></tr></table></div>"
+	"<div><table><tr><td>" ++ user:render_user(User) ++ "</td><td><div>" ++ Contents ++ "</div></td></tr></table></div>".
