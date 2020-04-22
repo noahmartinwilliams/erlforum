@@ -2,7 +2,7 @@
 -include("include/post.hrl").
 -include("include/user.hrl").
 -include_lib("eunit/include/eunit.hrl").
--export([selected2post/2, selected2posts/2, creat_post_table/1, add_post/2, get_post/2, render_post/1]).
+-export([selected2post/2, selected2posts/2, creat_post_table/1, add_post/2, get_post/2, render_post/1, render_posts/1]).
 
 creat_post_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, is_deleted BOOL, uid INTEGER, contents TEXT, tid INTEGER);").
@@ -41,4 +41,8 @@ add_post_test() ->
 
 render_post(Post) -> 
 	#post{user = User, contents = Contents} = Post,
-	"<div><table><tr><td>" ++ user:render_user(User) ++ "</td><td><div>" ++ Contents ++ "</div></td></tr></table></div>".
+	"<div><table><tr><td bgcolor=\"red\">" ++ user:render_user(User) ++ "</td><td bgcolor=\"lightblue\"><div>" ++ Contents ++ "</div></td></tr></table></div>".
+
+render_posts([]) -> "" ;
+render_posts([Head|Tail]) ->
+	render_post(Head) ++ "<br/>" ++ render_posts(Tail).

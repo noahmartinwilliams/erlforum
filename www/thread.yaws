@@ -1,0 +1,12 @@
+<html>
+<body>
+<erl>
+out(A) -> 
+	[{"tid", X}] = yaws_api:parse_query(A),
+	X2 = list_to_integer(X),
+	{ok, Ref} = odbc:connect("DSN=erlforum", []),
+	Thread = thread:get_thread(Ref, X2),
+	thread:render_thread(Thread).
+</erl>
+</body>
+</html>

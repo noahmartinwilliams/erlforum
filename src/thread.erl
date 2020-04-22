@@ -3,7 +3,7 @@
 -include("include/post.hrl").
 -include("include/user.hrl").
 -include_lib("eunit/include/eunit.hrl").
--export([creat_thread_table/1, add_thread/2, get_thread/2]).
+-export([creat_thread_table/1, add_thread/2, get_thread/2, render_thread/1]).
 
 creat_thread_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE threads(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, uid INTEGER);").
@@ -39,3 +39,7 @@ add_thread_test() ->
 	odbc:disconnect(Ref),
 	odbc:stop(),
 	file:delete("db/database.db").
+
+render_thread(Thread) ->
+	#thread{name=TName, posts=Posts} = Thread,
+	{html, "<h1>" ++ TName ++ "</h1><br/>" ++ post:render_posts(Posts)}.
