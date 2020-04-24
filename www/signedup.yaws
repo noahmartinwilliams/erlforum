@@ -1,0 +1,11 @@
+<html>
+<body>
+<erl>
+out(A) ->
+	[{"uname", Name}, {"password", Pass}|_] = yaws_api:parse_post(A),
+	{ok, Ref} = odbc:connect("DSN=erlforum", []),
+	user:add_user(Ref, Name, Pass),
+	{html, "Done!"}.
+</erl>
+</body>
+</html>
