@@ -1,0 +1,9 @@
+<html>
+<body>
+<form method="post" action="/signedin.yaws">
+<input type = "text" id = "uname" name="uname" /><br/>
+<input type="password" id = "password" name="password" /> <br/>
+<input type = "submit" value = "submit" />
+</form>
+</body>
+</html>

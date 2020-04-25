@@ -1,0 +1,24 @@
+<html>
+<body>
+<erl>
+-include("include/user.hrl").
+-include("include/cookie.hrl").
+
+out(A) ->
+	[{"uname", Name}, {"password", Pass}|_] = yaws_api:parse_post(A),
+	{ok, Ref} = odbc:connect("DSN=erlforum", []),
+	User = user:get_user(Ref, Name),
+	Verified = user:verify_password(User, Pass),
+	if
+		Verified ->
+			M = #choc_cookie{uid=User#user.id, chocolate_chip = user:rand_string(140)},
+			cookie:add_cookie(Ref, M),
+			Cookie = yaws_api:new_cookie_session(M),
+			CO = yaws_api:set_cookie("login_cookie", Cookie, [{path, "/"}]),
+			[{html, "signed in!"}, CO];
+		true ->
+			{html, "failed to sign in."}
+	end.
+</erl>
+</body>
+</html>

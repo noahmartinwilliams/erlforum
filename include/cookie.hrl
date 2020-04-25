@@ -1,0 +1,1 @@
+-record(choc_cookie, {uid, chocolate_chip}).

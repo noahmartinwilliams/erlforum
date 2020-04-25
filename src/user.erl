@@ -2,7 +2,7 @@
 -include("include/user.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--export([creat_user_table/1, add_user/3, get_user/2, render_user/1]).
+-export([creat_user_table/1, verify_password/2, rand_string/1, add_user/3, get_user/2, render_user/1]).
 creat_user_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, is_admin BOOL, salt CHAR(32), hash CHAR(64) );").
 
@@ -18,7 +18,6 @@ verify_password(User, Pass) ->
 	#user{salt = Salt, hash = Hash} = User,
 	<<X:256/big-unsigned-integer>> = crypto:hash(sha256, (Salt ++ Pass)),
 	Y = lists:flatten(io_lib:format("~64.16.0b", [X])),
-	io:format("~p~p~n", [Y, Hash]),
 	Hash =:= Y.
 
 add_user(Ref, User, Password) when is_record(User, user) ->
