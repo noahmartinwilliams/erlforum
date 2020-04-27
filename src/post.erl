@@ -2,13 +2,13 @@
 -include("include/post.hrl").
 -include("include/user.hrl").
 -include_lib("eunit/include/eunit.hrl").
--export([selected2post/2, selected2posts/2, creat_post_table/1, add_post/2, get_post/2, render_post/1, render_posts/1]).
+-export([selected2post/2, selected2posts/2, creat_post_table/1, add_post/3, get_post/2, render_post/1, render_posts/1]).
 
 creat_post_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, is_deleted BOOL, uid INTEGER, contents TEXT, tid INTEGER);").
 
-add_post(Ref, Post) ->
-	#post{user=User, contents=Contents, tid=Tid} = Post,
+add_post(Ref, Post, Tid) ->
+	#post{user=User, contents=Contents} = Post,
 	#user{id=Uid} = User,
 	Uid2 = {sql_integer, [Uid]},
 	Contents2 = {{sql_char, length(Contents)}, [Contents]},
@@ -32,7 +32,7 @@ add_post_test() ->
 	User1 = #user{id = 1, name="noah", is_admin=true},
 	Post1 = #post{user=User1, id=1, contents="hi", tid=1, is_deleted=false},
 	user:add_user(Ref, User1),
-	add_post(Ref, Post1),
+	add_post(Ref, Post1, 1),
 	Post2 = get_post(Ref, 1),
 	?assert(Post1 =:= Post2),
 	odbc:disconnect(Ref),

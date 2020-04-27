@@ -11,13 +11,21 @@ creat_thread_table(Ref) ->
 add_thread(Ref, Thread) ->
 	#thread{name=TName, user=User, posts=[Post1|_]} = Thread,
 	#user{id=Uid} = User,
-	post:add_post(Ref, Post1),
 	TName2 = {{sql_char, length(TName)}, [TName]},
 	Uid2 = {sql_integer, [Uid]},
-	odbc:param_query(Ref, "INSERT INTO threads(name, uid) VALUES(?, ?);", [TName2, Uid2]).
+	odbc:param_query(Ref, "INSERT INTO threads(name, uid) VALUES(?, ?);", [TName2, Uid2]),
+	{selected, _, [{Tid}]} = odbc:param_query(Ref, "SELECT id FROM threads WHERE name == ?;", [TName2]),
+	post:add_post(Ref, Post1, Tid).
 
 get_thread(Ref, Id) when is_integer(Id) ->
 	{selected, _, [{_, Name, Uid}]} = odbc:param_query(Ref, "SELECT * FROM threads WHERE id == ?;", [{sql_integer, [Id]}]),
+	{selected, _, Posts} = odbc:param_query(Ref, "SELECT * FROM posts WHERE tid == ?;", [{sql_integer, [Id]}]),
+	User = user:get_user(Ref, Uid),
+	Posts2 = post:selected2posts(Ref, Posts),
+	#thread{name=Name, user=User, posts=Posts2, id=Id};
+
+get_thread(Ref, Name) when is_list(Name) ->
+	{selected, _, [{Id, _, Uid}]} = odbc:param_query(Ref, "SELECT * FROM threads WHERE name == ?;", [{{sql_char, length(Name)}, [Name]}]),
 	{selected, _, Posts} = odbc:param_query(Ref, "SELECT * FROM posts WHERE tid == ?;", [{sql_integer, [Id]}]),
 	User = user:get_user(Ref, Uid),
 	Posts2 = post:selected2posts(Ref, Posts),
