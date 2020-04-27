@@ -19,8 +19,7 @@
 						thread:add_thread(Ref, Thread),
 						Thread2 = thread:get_thread(Ref, Title),
 						Tid = integer_to_list(Thread2#thread.id),
-						yaws_api:redirect("/thread.yaws?tid=" ++ Tid),
-						{html, "redirecting to /thread.yaws?tid=" ++ Tid}
+						yaws_api:redirect("/thread.yaws?tid=" ++ Tid)
 				end;
 
 			[] ->
