@@ -1,12 +1,24 @@
 <html>
 <body>
 <erl>
+-include("include/cookie.hrl").
 out(A) -> 
+	H = A#arg.headers,
+	C = H#headers.cookie,
 	[{"tid", X}] = yaws_api:parse_query(A),
 	X2 = list_to_integer(X),
 	{ok, Ref} = odbc:connect("DSN=erlforum", []),
 	Thread = thread:get_thread(Ref, X2),
-	thread:render_thread(Thread).
+	{html, Contents} = thread:render_thread(Thread),
+	case yaws_api:find_cookie_val("login_cookie", C) of
+		Cookie ->
+			case yaws_api:cookieval_to_opaque(Cookie) of 
+				{ok, _} ->
+					{html, Contents ++ "<br/><form method=\"post\" action=\"/cposted.yaws\"><input type=\"hidden\" id=\"tid\" name=\"tid\" value=\"" ++ X ++ "\" /><br/><input type=\"text\" id=\"post\" name=\"post\" /><br/><input type=\"submit\" value=\"submit\"/></form>" }
+			end ;
+		[] ->
+			{html, Contents}
+	end.
 </erl>
 </body>
 </html>

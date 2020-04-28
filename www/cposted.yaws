@@ -1,0 +1,29 @@
+<html>
+<body>
+<erl>
+-include("include/cookie.hrl").
+-include("include/post.hrl").
+-include("include/thread.hrl").
+out(A) ->
+	H = A#arg.headers,
+	C = H#headers.cookie,
+	[{"tid", X}, {"post", Post}|_] = yaws_api:parse_post(A),
+	X2 = list_to_integer(X),
+	{ok, Ref} = odbc:connect("DSN=erlforum", []),
+	Thread = thread:get_thread(Ref, X2),
+	case yaws_api:find_cookie_val("login_cookie", C) of
+		Cookie ->
+			case yaws_api:cookieval_to_opaque(Cookie) of
+				{ok, Op} ->
+					Uid = Op#choc_cookie.uid,
+					Post2 = #post{user=user:get_user(Ref, Uid), contents=Post},
+					post:add_post(Ref, Post2, Thread#thread.id),
+					Thread2 = thread:get_thread(Ref, X2),
+					thread:render_thread(Thread2)
+			end ;
+		[] ->
+			{html, "internal error: cookie not found."}
+	end.
+</erl>
+</body>
+</html>

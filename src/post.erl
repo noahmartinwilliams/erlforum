@@ -1,11 +1,15 @@
 -module(post).
 -include("include/post.hrl").
 -include("include/user.hrl").
+-include("include/thread.hrl").
 -include_lib("eunit/include/eunit.hrl").
 -export([selected2post/2, selected2posts/2, creat_post_table/1, add_post/3, get_post/2, render_post/1, render_posts/1]).
 
 creat_post_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, is_deleted BOOL, uid INTEGER, contents TEXT, tid INTEGER);").
+
+add_post(Ref, Post, Thread) when is_record(Thread, thread) ->
+	add_post(Ref, Post, Thread#thread.id) ;
 
 add_post(Ref, Post, Tid) ->
 	#post{user=User, contents=Contents} = Post,
