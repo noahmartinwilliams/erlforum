@@ -54,7 +54,7 @@ render_thread(Thread) ->
 
 get_all_threads_worker(Thread, Ref, Pid) -> Pid ! get_thread(Ref, Thread).
 
-get_all_threads_intern([], _, _) -> [] ;
+get_all_threads_intern([], _, Pid) -> Pid ! eol ;
 get_all_threads_intern([{Head}|Tail], Ref, Pid) ->
 	get_all_threads_worker(Head, Ref, Pid),
 	get_all_threads_intern(Tail, Ref, Pid).
