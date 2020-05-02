@@ -21,3 +21,14 @@ split_query_test() ->
 	?assert(split_query("hello") =:= ["hello"]),
 	?assert(split_query("hello ") =:= ["hello"]),
 	?assert(split_query("hello world") =:= ["hello", "world"]).
+
+find_word(_, []) -> false ;
+find_word(Word, [Head|_]) when Head =:= Word -> true ;
+find_word(Word, [_|Tail]) -> find_word(Word, Tail).
+
+search_text(Word, Text) ->
+	Text2 = split_query(Text),
+	find_word(Word, Text2).
+
+search_text_test() ->
+	?assert(search_text("quizzaciously", "\"Hey, Vsauce! Michael Here, but who is Michael and how much does here weigh?\" the great parodist said quizzaciously")).
