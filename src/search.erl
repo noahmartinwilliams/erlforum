@@ -32,3 +32,26 @@ search_text(Word, Text) ->
 
 search_text_test() ->
 	?assert(search_text("quizzaciously", "\"Hey, Vsauce! Michael Here, but who is Michael and how much does here weigh?\" the great parodist said quizzaciously")).
+
+search_texts_worker(Word, Text, Pid) -> Pid ! search_text(Word, Text).
+
+search_texts_receive(0) -> true ;
+search_texts_receive(X) ->
+	receive
+		Y ->
+			Y and search_texts_receive(X-1)
+	end.
+
+search_texts_spawn([], _) -> 0 ;
+search_texts_spawn([Head|Tail], Text) ->
+	X = self(),
+	link(spawn(fun() -> search_texts_worker(Head, Text, X) end)),
+	1 + search_texts_spawn(Tail, Text).
+
+search_texts(Words, Text) ->
+	X = search_texts_spawn(Words, Text),
+	search_texts_receive(X).
+
+search_texts_test() ->
+	?assert(search_texts(["hey", "vsauce"], "hey , vsauce ! Michael here!")),
+	?assert(search_texts(["hey", "vsauce"], "hey , Michael here!") =:= false).
