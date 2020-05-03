@@ -52,24 +52,13 @@ render_thread(Thread) ->
 	#thread{name=TName, posts=Posts} = Thread,
 	{html, "<h1>" ++ TName ++ "</h1><br/>" ++ post:render_posts(Posts)}.
 
-get_all_threads_receive(0) -> [] ;
-get_all_threads_receive(X) ->
-	receive
-		Y ->
-			[Y|get_all_threads_receive(X-1)]
-	end.
-
-get_all_threads_spawn([], _) -> 0 ;
-get_all_threads_spawn([{Thread}|Tail], Ref) ->
-	X = self(),
-	io:format("~p~n", [Thread]),
-	link(spawn(fun() -> X ! get_thread(Ref, Thread) end)),
-	1 + get_all_threads_spawn(Tail, Ref).
+get_all_threads_intern([], _) -> [] ;
+get_all_threads_intern([{Thread}|Tail], Ref) ->
+	[get_thread(Ref, Thread)|get_all_threads_intern(Tail, Ref)].
 
 get_all_threads(Ref) ->
 	{selected, _, List} = odbc:sql_query(Ref, "SELECT id FROM threads;"),
-	Spawned = get_all_threads_spawn(List, Ref),
-	get_all_threads_receive(Spawned).
+	get_all_threads_intern(List, Ref).
 
 get_all_threads_test() ->
 	odbc:start(),
@@ -83,7 +72,7 @@ get_all_threads_test() ->
 	user:add_user(Ref, User1, "word"),
 	add_thread(Ref, Thread1),
 	X = get_all_threads(Ref),
-	?assert(X =:= 1),
+	?assert(length(X) =:= 1),
 	odbc:disconnect(Ref),
 	odbc:stop(),
 	file:delete("db/database.db").
