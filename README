@@ -1,0 +1,6 @@
+* requirements: yaws, erlang, erlang-unixodbc, unixodbc, sqlite3
+* urls: 127.0.0.1:8080/signup.yaws
+	127.0.0.1:8080/signin.yaws
+	127.0.0.1:8080/cthread.yaws
+	127.0.0.1:8080/thread?tid=1
+	127.0.0.1:8080/thread?tid=2

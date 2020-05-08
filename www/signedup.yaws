@@ -7,5 +7,6 @@ out(A) ->
 	user:add_user(Ref, Name, Pass),
 	{html, "Done!"}.
 </erl>
+<br/><a href="/signin.yaws">now sign in.</a>
 </body>
 </html>

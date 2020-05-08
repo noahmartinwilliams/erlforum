@@ -5,7 +5,7 @@
 -include("include/thread.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--export([search_all_threads/2]).
+-export([search_all_threads/2, render_search_results/1]).
 
 split_query([]) -> [] ;
 split_query([A]) when is_list(A) -> 
@@ -54,59 +54,33 @@ search_texts(Words, Text) ->
 
 search_texts_test() ->
 	?assert(search_texts(["hey", "vsauce"], "hey , vsauce ! Michael here!")),
-	?assert(search_texts(["hi", "vsauce"], "hey , Michael here!") =:= false).
+	?assert(search_texts(["hi", "vsauce"], "hey , Michael here!") =:= false),
+	?assert(search_texts(["world"], "world")).
 
 search_post(Words, Post) ->
 	search_texts(Words, Post#post.contents).
 
-search_thread_worker(Words, Post, Pid) -> Pid ! search_post(Words, Post).
+search_thread(_, []) -> true ;
+search_thread(Words, [Post|Tail]) ->
+	X = search_post(Words, Post),
+	X and search_thread(Words, Tail).
 
-search_thread_receive(0) -> true ;
-search_thread_receive(X) ->
-	receive
-		Y ->
-			Y and search_thread_receive(X - 1)
-	end.
 
-search_thread_spawn([], _) -> 0 ;
-search_thread_spawn([Post|Tail], Query) ->
-	X = self(),
-	link(spawn(fun() -> search_thread_worker(Query, Post, X) end)),
-	1 + search_thread_spawn(Tail, Query).
-
-search_thread(Words, Thread) ->
-	Spawned = search_thread_spawn(Thread#thread.posts, Words),
-	search_thread_receive(Spawned).
-
-search_threads_worker(Words, Thread, Pid) -> 
-	Results = search_thread(Words, Thread),
-	if 
+search_threads(_, []) -> [] ;
+search_threads(Words, [Head|Tail]) ->
+	Results = search_thread(Words, Head#thread.posts),
+	if
 		Results ->
-			Pid ! Thread ;
+			[Head|search_threads(Words, Tail)];
 		true ->
-			Pid ! dud 
+			search_threads(Words, Tail)
 	end.
-
-search_threads_receive(0) -> [] ;
-search_threads_receive(X) ->
-	receive
-		dud ->
-			search_threads_receive(X-1) ;
-		Y ->
-			[Y|search_threads_receive(X-1)]
-	end.
-
-search_threads_spawn([], _ ) -> 0 ;
-search_threads_spawn([Thread|Rest], Words) ->
-	X = self(),
-	link(spawn(fun() -> search_threads_worker(Words, Thread, X) end)),
-	search_threads_spawn(Rest, Words).
-
-search_threads(Words, Threads) ->
-	Spawned = search_threads_spawn(Threads, Words),
-	search_threads_receive(Spawned).
 
 search_all_threads(Ref, Query) ->
 	Query2 = split_query(Query),
 	X = thread:get_all_threads(Ref),
 	search_threads(Query2, X).
+
+render_search_results([]) -> "" ;
+render_search_results([Head|Tail]) ->
+	thread:render_thread_head(Head) ++ render_search_results(Tail).

@@ -3,7 +3,7 @@
 -include("include/user.hrl").
 -include("include/thread.hrl").
 -include_lib("eunit/include/eunit.hrl").
--export([selected2post/2, selected2posts/2, creat_post_table/1, add_post/3, get_post/2, render_post/1, render_posts/1]).
+-export([shorten/1, selected2post/2, selected2posts/2, creat_post_table/1, add_post/3, get_post/2, render_post/1, render_posts/1]).
 
 creat_post_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, is_deleted BOOL, uid INTEGER, contents TEXT, tid INTEGER);").
@@ -50,3 +50,15 @@ render_post(Post) ->
 render_posts([]) -> "" ;
 render_posts([Head|Tail]) ->
 	render_post(Head) ++ "<br/>" ++ render_posts(Tail).
+
+shorten(Post) when is_record(Post, post) ->
+	shorten(Post#post.contents);
+
+shorten(Post) when is_list(Post) ->
+	if
+		length(Post) < 140 ->
+			Post ;
+		true ->
+			{X, _} = list:split(140, Post),
+			X
+	end.

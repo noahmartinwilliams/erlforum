@@ -20,5 +20,6 @@ out(A) ->
 			{html, "failed to sign in."}
 	end.
 </erl>
+<br/><a href="/main.yaws"> now go back to main.</a>
 </body>
 </html>

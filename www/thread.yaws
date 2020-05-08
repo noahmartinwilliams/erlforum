@@ -14,11 +14,12 @@ out(A) ->
 		Cookie ->
 			case yaws_api:cookieval_to_opaque(Cookie) of 
 				{ok, _} ->
-					{html, Contents ++ "<br/><form method=\"post\" action=\"/cposted.yaws\"><input type=\"hidden\" id=\"tid\" name=\"tid\" value=\"" ++ X ++ "\" /><br/><input type=\"text\" id=\"post\" name=\"post\" /><br/><input type=\"submit\" value=\"submit\"/></form>" }
+					{html, Contents ++ "<br/><form method=\"post\" action=\"/cposted.yaws\"><input type=\"hidden\" id=\"tid\" name=\"tid\" value=\"" ++ X ++ "\" /><br/><input type=\"textarea\" id=\"post\" name=\"post\" /><br/><input type=\"submit\" value=\"submit\"/></form>" }
 			end ;
 		[] ->
 			{html, Contents}
 	end.
 </erl>
+<br/><a href="/main.yaws"> go back to main.</a>
 </body>
 </html>
