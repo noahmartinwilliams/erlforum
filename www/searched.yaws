@@ -1,0 +1,17 @@
+<html>
+<body>
+<table>
+<tr><td><form method="post" action="/searched.yaws"><input type="text" id="search" value="search" contents="search" /><br/><input type="submit" value="search"/></form></td></tr>
+<erl>
+	-include("include/thread.hrl").
+	out(A) ->
+		[{"search", Query}|_] = yaws_api:parse_post(A),
+		{ok, Ref} = odbc:connect("DSN=erlforum", []),
+		AllThreads = search:search_all_threads(Ref, Query),
+		X = search:render_search_results(AllThreads),
+		{html, X}.
+
+</erl>
+</table>
+</body>
+</html>

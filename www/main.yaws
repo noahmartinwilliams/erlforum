@@ -1,0 +1,12 @@
+<html>
+<body>
+<a href="/signin.yaws">Sign in</a><br/>
+<a href="/signup.yaws">Sign up</a><br/>
+<br/><br/>
+<a href="/cthread.yaws"> create thread</a><br/>
+<form method="post" action="/searched.yaws">
+<input type="text" id="search" value="search" name="search" />
+<input type="submit" value="search" />
+</form>
+</body>
+</html>

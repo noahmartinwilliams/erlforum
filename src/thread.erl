@@ -78,6 +78,6 @@ get_all_threads_test() ->
 	file:delete("db/database.db").
 
 render_thread_head(Thread) when is_record(Thread, thread) ->
-	#thread{name=Name, user=User, posts=[Post1|_]} = Thread,
+	#thread{name=Name, id=Id, user=User, posts=[Post1|_]} = Thread,
 	UserName = User#user.name,
-	"<tr><td>" ++ UserName ++ "</td><td>" ++ Name ++ "</td></tr><tr><td>" ++ post:shorten(Post1) ++ "</td></tr>".
+	"<tr><td>" ++ UserName ++ "</td><td><a href=\"/thread.yaws?tid=" ++ integer_to_list(Id) ++ "\" >" ++ Name ++ "</a></td></tr><tr><td>" ++ post:shorten(Post1) ++ "</td></tr></a>".
