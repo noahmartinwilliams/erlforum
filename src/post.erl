@@ -3,7 +3,7 @@
 -include("include/user.hrl").
 -include("include/thread.hrl").
 -include_lib("eunit/include/eunit.hrl").
--export([shorten/1, selected2post/2, selected2posts/2, creat_post_table/1, add_post/3, get_post/2, render_post/1, render_posts/1]).
+-export([can_delete_post/2, shorten/1, selected2post/2, selected2posts/2, creat_post_table/1, add_post/3, get_post/2, render_post/1, render_posts/1]).
 
 creat_post_table(Ref) ->
 	odbc:sql_query(Ref, "CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, is_deleted BOOL, uid INTEGER, contents TEXT, tid INTEGER);").
@@ -35,10 +35,10 @@ add_post_test() ->
 	creat_post_table(Ref),
 	User1 = #user{id = 1, name="noah", is_admin=true},
 	Post1 = #post{user=User1, id=1, contents="hi", tid=1, is_deleted=false},
-	user:add_user(Ref, User1),
+	user:add_user(Ref, User1, "password"),
 	add_post(Ref, Post1, 1),
 	Post2 = get_post(Ref, 1),
-	?assert(Post1 =:= Post2),
+	?assert(Post1#post.contents =:= Post2#post.contents),
 	odbc:disconnect(Ref),
 	odbc:stop(),
 	file:delete("db/database.db").
@@ -62,3 +62,14 @@ shorten(Post) when is_list(Post) ->
 			{X, _} = list:split(140, Post),
 			X
 	end.
+
+can_delete_post(User, Post) -> (User#user.id =:= (Post#post.user)#user.id) or User#user.is_admin.
+
+can_delete_post_test() ->
+	User = #user{name="noah", id=1, is_admin=false},
+	Post = #post{user=User, id=1, contents="hello world", tid=1, is_deleted = false},
+	T = post:can_delete_post(User, Post),
+	?assert(T),
+	User2 = #user{name="nate", id=2, is_admin=true},
+	T2 = post:can_delete_post(User2, Post),
+	?assert(T2).
