@@ -1,8 +1,8 @@
 -module(search).
 
--include("include/user.hrl").
--include("include/post.hrl").
--include("include/thread.hrl").
+-include("user.hrl").
+-include("post.hrl").
+-include("thread.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
 -export([search_all_threads/2, render_search_results/1]).
@@ -20,7 +20,8 @@ split_query([A, B|Rest]) when is_list(A) and ( B =:= 32 ) -> % B =:= ' '
 split_query_test() ->
 	?assert(split_query("hello") =:= ["hello"]),
 	?assert(split_query("hello ") =:= ["hello"]),
-	?assert(split_query("hello world") =:= ["hello", "world"]).
+	?assert(split_query("hello world") =:= ["hello", "world"]),
+	?assert(split_query("double post!") =:= ["double", "post!"]).
 
 find_word(_, []) -> false ;
 find_word(Word, [Head|_]) when Head =:= Word -> true ;

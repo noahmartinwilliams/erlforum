@@ -1,7 +1,7 @@
 -module(thread).
--include("include/thread.hrl").
--include("include/post.hrl").
--include("include/user.hrl").
+-include("thread.hrl").
+-include("post.hrl").
+-include("user.hrl").
 -include_lib("eunit/include/eunit.hrl").
 -export([render_thread_head/1, get_all_threads/1, creat_thread_table/1, add_thread/2, get_thread/2, render_thread/1]).
 

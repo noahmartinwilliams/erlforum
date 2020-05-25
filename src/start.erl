@@ -1,7 +1,7 @@
 -module(start).
--include("include/user.hrl").
--include("include/post.hrl").
--include("include/thread.hrl").
+-include("user.hrl").
+-include("post.hrl").
+-include("thread.hrl").
 -export([start/0]).
 
 start() ->

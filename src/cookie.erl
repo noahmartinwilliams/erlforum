@@ -1,6 +1,6 @@
 -module(cookie).
 
--include("include/cookie.hrl").
+-include("cookie.hrl").
 -export([creat_cookie_table/1, add_cookie/2]).
 
 creat_cookie_table(Ref) ->

@@ -1,7 +1,7 @@
 -module(post).
--include("include/post.hrl").
--include("include/user.hrl").
--include("include/thread.hrl").
+-include("post.hrl").
+-include("user.hrl").
+-include("thread.hrl").
 -include_lib("eunit/include/eunit.hrl").
 -export([can_delete_post/2, shorten/1, selected2post/2, selected2posts/2, creat_post_table/1, add_post/3, get_post/2, render_post/1, render_posts/1]).
 

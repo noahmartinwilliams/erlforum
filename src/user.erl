@@ -1,5 +1,5 @@
 -module(user).
--include("include/user.hrl").
+-include("user.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
 -export([creat_user_table/1, verify_password/2, rand_string/1, add_user/3, get_user/2, render_user/1]).
