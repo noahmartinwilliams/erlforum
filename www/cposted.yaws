@@ -25,5 +25,6 @@ out(A) ->
 			{html, "internal error: cookie not found."}
 	end.
 </erl>
+<a href="/main.yaws">go back to main.</a>
 </body>
 </html>
