@@ -54,7 +54,9 @@ search_thread(Words, [Post|Tail]) ->
 
 search_threads(_, []) -> [] ;
 search_threads(Words, [Head|Tail]) ->
-	Results = search_thread(Words, Head#thread.posts),
+	Results0 = search_thread(Words, Head#thread.posts),
+	Results1 = search_texts(Words, Head#thread.name),
+	Results = Results0 or Results1,
 	if
 		Results ->
 			[Head|search_threads(Words, Tail)];
