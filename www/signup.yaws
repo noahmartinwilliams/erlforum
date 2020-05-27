@@ -1,9 +1,24 @@
 <html>
+<head>
+<script type="text/javascript">
+function checkPass()
+{
+	var password = document.getElementById('password2');
+	var password2 = document.getElementById('password');
+	if (password.value != password2.value) {
+		alert("Passwords do not match!");
+	} else {
+		document.myForm.submit();
+	}
+}
+</script>
+</head>
 <body>
-<form method="post" action="/signedup.yaws">
-<input type="text" id="uname" name="uname" /><br/>
-<input type="password" id="password" name="password" /> <br/>
-<input type="submit" value="submit" />
+<form name="myForm" method="post" action="/signedup.yaws">
+<input type="text" id="uname" name="uname" value="username" /><br/>
+<input type="password" id="password" name="password" value="password" /> <br/>
+<input type="password" id="password2" name="password" value="password" /> <br/>
+<input type="button" value="submit" onClick="checkPass()" />
 </form>
 </body>
 </html>
