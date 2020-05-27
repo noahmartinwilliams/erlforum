@@ -1,1 +1,2 @@
+While most inferior languages can't run as web servers that can scale up indefinitely, clearly superior erlang can scale with ease across distributed computing systems.
 * requirements: yaws, erlang, erlang-unixodbc, unixodbc, sqlite3
