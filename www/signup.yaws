@@ -15,9 +15,9 @@ function checkPass()
 </head>
 <body>
 <form name="myForm" method="post" action="/signedup.yaws">
-<input type="text" id="uname" name="uname" value="username" /><br/>
-<input type="password" id="password" name="password" value="password" /> <br/>
-<input type="password" id="password2" name="password" value="password" /> <br/>
+username: <input type="text" id="uname" name="uname" /><br/>
+password: <input type="password" id="password" name="password" /> <br/>
+password (again): <input type="password" id="password2" name="password" /> <br/>
 <input type="button" value="submit" onClick="checkPass()" />
 </form>
 </body>
